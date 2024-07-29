@@ -4,10 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class VideoPembelajaranModel extends Model
+class VideoPembelajaranModels extends Model
 {
     protected $table = 'tb_video';
     protected $primaryKey = 'id_video';
+    protected $returnType = 'object';
     protected $useAutoIncrement = true;
     
     protected $allowedFields = [
