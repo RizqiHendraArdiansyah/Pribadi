@@ -10,32 +10,31 @@ class VideoPembelajaranModels extends Model
     protected $primaryKey = 'id_video';
     protected $returnType = 'object';
     protected $useAutoIncrement = true;
-    
     protected $allowedFields = [
         'judul_video',
         'video_url',
-        'deskripsi_video',
-        'id_katvideo'
+        'thumbnail',
+        'deskripsi_video'
     ];
-    
+
     protected $validationRules = [
-        'judul_video' => 'required|max_length[50]',
+        'judul_video' => 'required|max_length[100]',
         'video_url' => 'required|max_length[255]',
-        'deskripsi_video' => 'permit_empty',
-        'id_katvideo' => 'permit_empty|integer'
+        'thumbnail' => 'permit_empty|max_length[255]',
+        'deskripsi_video' => 'permit_empty'
     ];
-    
+
     protected $validationMessages = [
         'judul_video' => [
             'required' => 'Judul video wajib diisi.',
-            'max_length' => 'Judul video tidak boleh lebih dari 50 karakter.'
+            'max_length' => 'Judul video tidak boleh lebih dari 100 karakter.'
         ],
         'video_url' => [
             'required' => 'URL video wajib diisi.',
             'max_length' => 'URL video tidak boleh lebih dari 255 karakter.'
         ],
-        'id_katvideo' => [
-            'integer' => 'ID kategori video harus berupa angka.'
+        'thumbnail' => [
+            'max_length' => 'URL thumbnail tidak boleh lebih dari 255 karakter.'
         ]
     ];
 }

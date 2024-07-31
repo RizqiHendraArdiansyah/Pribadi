@@ -90,12 +90,13 @@ $routes->get('logout', 'Login::logout');
     $routes->get('admin/kategori_videos/delete/(:any)', 'admin\KategoriVideo::delete/$1');
 
     // Video
-    $routes->get('admin/videos', 'VideoController::index');
-    $routes->get('admin/videos/create', 'VideoController::create');
-    $routes->post('admin/videos/store', 'VideoController::store');
-    $routes->get('admin/videos/edit/(:num)', 'VideoController::edit/$1');
-    $routes->post('admin/videos/update/(:num)', 'VideoController::update/$1');
-    $routes->get('admin/videos/delete/(:num)', 'VideoController::delete/$1');
+    $routes->get('admin/video_pembelajaran/index', 'admin\Video::index');
+    $routes->get('admin/video_pembelajaran/tambah', 'admin\Video::tambah');
+    $routes->post('admin/video_pembelajaran/proses_tambah', 'admin\Video::proses_tambah');
+    $routes->get('admin/video_pembelajaran/edit/(:num)', 'admin\Video::edit/$1');
+    $routes->post('admin/video_pembelajaran/proses_edit/(:num)', 'admin\Video::proses_edit/$1');
+    $routes->get('admin/video_pembelajaran/delete/(:any)', 'admin\Video::delete/$1');
+
 
     // Pengumuman
     $routes->get('admin/pengumuman/index', 'admin\Pengumuman::index');
