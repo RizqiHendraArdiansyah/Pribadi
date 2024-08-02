@@ -2,139 +2,112 @@
 
 namespace App\Controllers\admin;
 
-use App\Controllers\BaseController;
 use App\Models\VideoPembelajaranModels;
+use App\Models\KategoriVideoModels;
+use App\Controllers\BaseController;
 
 class Video extends BaseController
 {
     public function index()
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
-        }
-
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to(base_url('/'));
-        }
-
         $video_model = new VideoPembelajaranModels();
-        $videos = $video_model->findAll();
+        $kategori_model = new KategoriVideoModels();
+        $video_model->save($this->request->getPost());
+        
+
+        $videos = $video_model->getAllVideosWithCategory();
+        $kategori = $kategori_model->findAll();
 
         return view('admin/video_pembelajaran/index', [
-            'videos' => $videos
+            'videos' => $videos,
+            'kategori' => $kategori
+
+
         ]);
     }
 
     public function tambah()
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
-        }
+        $kategori_model = new KategoriVideoModels();
+        $kategori = $kategori_model->findAll();
 
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to(base_url('/'));
-        }
+        return view('admin/video_pembelajaran/tambah', [
+            'kategori' => $kategori
 
-        return view('admin/video_pembelajaran/tambah');
+        ]);
     }
 
     public function proses_tambah()
     {
         $video_model = new VideoPembelajaranModels();
-        
-        // Handle thumbnail upload
-        $thumbnail = $this->request->getFile('thumbnail');
-        if ($thumbnail->isValid() && !$thumbnail->hasMoved()) {
-            $thumbnailName = $thumbnail->getRandomName();
-            $thumbnail->move('uploads/thumbnails/', $thumbnailName);
-        } else {
-            $thumbnailName = null;
-        }
-
         $data = [
-            'judul_video' => $this->request->getVar("judul_video"),
-            'video_url' => $this->request->getVar("video_url"),
-            'thumbnail' => $thumbnailName,
-            'deskripsi_video' => $this->request->getVar("deskripsi_video"),
+            'judul_video' => $this->request->getVar('judul_video'),
+            'video_url' => $this->request->getVar('video_url'),
+            'deskripsi_video' => $this->request->getVar('deskripsi_video'),
+            'judul_video' => $this->request->getVar('judul_video'),
+            'video_url' => $this->request->getVar('video_url'),
+            'id_katvideo' => $this->request->getVar('id_katvideo'),
         ];
 
-        if ($video_model->insert($data)) {
-            session()->setFlashdata('success', 'Data berhasil disimpan');
-        } else {
-            session()->setFlashdata('error', 'Data gagal disimpan');
+        if ($this->request->getFile('thumbnail')->isValid()) {
+            $thumbnail = $this->request->getFile('thumbnail');
+            $thumbnail->move('uploads/thumbnails');
+            $data['thumbnail'] = $thumbnail->getName();
+
         }
 
+        $video_model->save($data);
+        session()->setFlashdata('success', 'Data berhasil disimpan');
         return redirect()->to(base_url('admin/video_pembelajaran/index'));
     }
 
     public function edit($id_video)
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
-        }
-
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to(base_url('/'));
-        }
-
         $video_model = new VideoPembelajaranModels();
         $video = $video_model->find($id_video);
 
+        $kategori_model = new KategoriVideoModels();
+        $kategori = $kategori_model->findAll();
+
         return view('admin/video_pembelajaran/edit', [
-            'video' => $video
+            'video' => $video,
+            'kategori' => $kategori
         ]);
     }
 
     public function proses_edit($id_video)
     {
         $video_model = new VideoPembelajaranModels();
-        
-        // Handle thumbnail upload
-        $thumbnail = $this->request->getFile('thumbnail');
-        if ($thumbnail->isValid() && !$thumbnail->hasMoved()) {
-            $thumbnailName = $thumbnail->getRandomName();
-            $thumbnail->move('uploads/thumbnails/', $thumbnailName);
-        } else {
-            $thumbnailName = $this->request->getVar('old_thumbnail');
-        }
-
         $data = [
-            'judul_video' => $this->request->getVar("judul_video"),
-            'video_url' => $this->request->getVar("video_url"),
-            'thumbnail' => $thumbnailName,
-            'deskripsi_video' => $this->request->getVar("deskripsi_video"),
+            'judul_video' => $this->request->getVar('judul_video'),
+            'video_url' => $this->request->getVar('video_url'),
+            'deskripsi_video' => $this->request->getVar('deskripsi_video'),
+            'id_katvideo' => $this->request->getVar('id_katvideo'),
         ];
 
-        if ($video_model->update($id_video, $data)) {
-            session()->setFlashdata('success', 'Data berhasil diubah');
+        if ($this->request->getFile('thumbnail')->isValid()) {
+            $thumbnail = $this->request->getFile('thumbnail');
+            $thumbnail->move('uploads/thumbnails');
+            $data['thumbnail'] = $thumbnail->getName();
         } else {
-            session()->setFlashdata('error', 'Data gagal diubah');
+            $data['thumbnail'] = $this->request->getVar('old_thumbnail');
         }
 
+        $video_model->update($id_video, $data);
+        session()->setFlashdata('success', 'Data berhasil diperbarui');
         return redirect()->to(base_url('admin/video_pembelajaran/index'));
     }
 
     public function delete($id_video)
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('login'));
-        }
-
-        $role = session()->get('role');
-        if ($role !== 'admin') {
-            return redirect()->to(base_url('/'));
-        }
-
         $video_model = new VideoPembelajaranModels();
-        if ($video_model->delete($id_video)) {
-            session()->setFlashdata('success', 'Data berhasil dihapus');
-        } else {
-            session()->setFlashdata('error', 'Data gagal dihapus');
-        }
+        $video = $video_model->find($id_video);
 
+        $kategori_model = new KategoriVideoModels();
+        $kategori = $kategori_model->findAll();
+        $video_model->delete($id_video);
+
+        session()->setFlashdata('success', 'Data berhasil dihapus');
         return redirect()->to(base_url('admin/video_pembelajaran/index'));
     }
 }

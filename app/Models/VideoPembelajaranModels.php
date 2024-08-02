@@ -14,27 +14,14 @@ class VideoPembelajaranModels extends Model
         'judul_video',
         'video_url',
         'thumbnail',
-        'deskripsi_video'
+        'deskripsi_video',
+        'id_katvideo'
     ];
 
-    protected $validationRules = [
-        'judul_video' => 'required|max_length[100]',
-        'video_url' => 'required|max_length[255]',
-        'thumbnail' => 'permit_empty|max_length[255]',
-        'deskripsi_video' => 'permit_empty'
-    ];
-
-    protected $validationMessages = [
-        'judul_video' => [
-            'required' => 'Judul video wajib diisi.',
-            'max_length' => 'Judul video tidak boleh lebih dari 100 karakter.'
-        ],
-        'video_url' => [
-            'required' => 'URL video wajib diisi.',
-            'max_length' => 'URL video tidak boleh lebih dari 255 karakter.'
-        ],
-        'thumbnail' => [
-            'max_length' => 'URL thumbnail tidak boleh lebih dari 255 karakter.'
-        ]
-    ];
+    public function getAllVideosWithCategory()
+    {
+        return $this->select('tb_video.*, tb_kategori_video.nama_kategori_video')
+                    ->join('tb_kategori_video', 'tb_kategori_video.id_katvideo = tb_video.id_katvideo', 'left')
+                    ->findAll();
+    }
 }

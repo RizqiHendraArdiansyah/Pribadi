@@ -69,7 +69,7 @@ class KategoriVideo extends BaseController
         }
 
         $kategori_model = new KategoriVideoModels();
-        $katvidData = $kategori_model->find($id_katvideo);
+        $katvidData = $kategori_model->find($id_katvideo);  
 
         return view('admin/kategori_videos/edit', [
             'katvidData' => $katvidData
